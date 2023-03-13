@@ -1,7 +1,12 @@
 import mainLogo from "../../img/pokedexpnglogo.png";
 import SearchBar from "../ui/SearchBar";
+import PropTypes from "prop-types";
 
-function MainNavigation() {
+function MainNavigation({ onSearch }) {
+  const handleClick = () => {
+    onSearch("");
+  };
+
   return (
     <header className="w-full h-20 flex items-center justify-center bg-purpleTheme px-10 rounded-bl-3xl rounded-br-3xl">
       <div className="container  mx-0">
@@ -11,22 +16,30 @@ function MainNavigation() {
               src={mainLogo}
               alt="PokeDex Logo"
               draggable="false"
-              className="w-150 h-40"
+              className="w-150 h-40 cursor-pointer"
+              onClick={handleClick}
             />
           </div>
           <div className="flex justify-end w-1/2  ">
-            <SearchBar placeHolder="Search Pokemon by name or ID" />
+            <SearchBar
+              placeHolder="Search Pokemon by name or ID"
+              onSearch={onSearch}
+            />
           </div>
         </div>
 
         <div className="flex items-center justify-center mx-auto w-full md:hidden ">
           <div className="flex justify-center w-full ">
-            <SearchBar placeHolder="Search Pokemon" />
+            <SearchBar placeHolder="Search Pokemon" onSearch={onSearch} />
           </div>
         </div>
       </div>
     </header>
   );
 }
+
+MainNavigation.propTypes = {
+  onSearch: PropTypes.func,
+};
 
 export default MainNavigation;

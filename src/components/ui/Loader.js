@@ -2,7 +2,7 @@ import styles from "./Loader.module.css";
 
 function Loader() {
   return (
-    <div id="wrapper">
+    <div className="h-full w-full flex items-center justify-center">
       <div className={styles["profile-main-loader"]}>
         <div className={styles.loader}>
           <svg className={styles["circular-loader"]} viewBox="25 25 50 50">

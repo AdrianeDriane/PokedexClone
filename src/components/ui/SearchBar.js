@@ -1,13 +1,28 @@
+import { useState, useRef } from "react";
+import PropTypes from "prop-types";
 import SearchIcon from "./SearchIcon";
 import miniLogo from "../../img/pokedex_mini_logo.png";
-import { useRef } from "react";
-import PropTypes from "prop-types";
 
-function SearchBar({ placeHolder }) {
+function SearchBar({ placeHolder, onSearch }) {
   const inputRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleIconClick = () => {
     inputRef.current.focus();
+  };
+
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearch = () => {
+    onSearch(searchTerm);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      onSearch(searchTerm);
+    }
   };
 
   return (
@@ -25,8 +40,11 @@ function SearchBar({ placeHolder }) {
           placeholder={placeHolder}
           className="mx-2 w-full outline-none bg-white text-purpleTheme"
           ref={inputRef}
+          value={searchTerm}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyPress}
         />
-        <SearchIcon onClick={handleIconClick} />
+        <SearchIcon onClick={handleSearch} />
       </div>
     </div>
   );
@@ -34,6 +52,7 @@ function SearchBar({ placeHolder }) {
 
 SearchBar.propTypes = {
   placeholder: PropTypes.string,
+  onSearch: PropTypes.func.isRequired,
 };
 
 export default SearchBar;
