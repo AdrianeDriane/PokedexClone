@@ -11,6 +11,10 @@ function SearchBar({ placeHolder, onSearch }) {
     inputRef.current.focus();
   };
 
+  const handleSmallScreenClick = () => {
+    onSearch("");
+  };
+
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -31,8 +35,15 @@ function SearchBar({ placeHolder, onSearch }) {
         <img
           src={miniLogo}
           alt="PokeDex Logo"
-          className="w-9 h-9"
+          className="w-9 h-9 hidden md:block "
           onClick={handleIconClick}
+          draggable="false"
+        />
+        <img
+          src={miniLogo}
+          alt="PokeDex Logo"
+          className="w-9 h-9 block md:hidden cursor-pointer"
+          onClick={handleSmallScreenClick}
           draggable="false"
         />
         <input

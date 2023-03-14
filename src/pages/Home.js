@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Axios from "axios";
 import PropTypes from "prop-types";
@@ -8,30 +8,37 @@ import CardsContainer from "../components/ui/CardComponents/CardsContainer";
 import SmallCard from "../components/ui/CardComponents/SmallCard";
 import Loader from "../components/ui/Loader";
 import Error from "./errors/Error";
+import Pagination from "../components/ui/Pagination";
 
-function Home({ searchTerm }) {
+function Home({ searchTerm, openBigCard }) {
   const [page, setPage] = useState(1);
   const limit = 100;
+
   const {
     data: pokemonData,
     isLoading,
     isError,
-  } = useQuery(["pokemon", searchTerm, page], () =>
-    searchTerm
-      ? Axios.get(
-          `https://pokeapi.co/api/v2/pokemon/${searchTerm.toLowerCase()}`
-        ).then((res) => res.data)
-      : Axios.get(
-          `https://pokeapi.co/api/v2/pokemon?offset=${
-            (page - 1) * limit
-          }&limit=${limit}`
-        ).then((res) => {
-          const { results } = res.data;
-          const requests = results.map((result) => Axios.get(result.url));
-          return Promise.all(requests).then((pokemonResponses) =>
-            pokemonResponses.map((pokemonRes) => pokemonRes.data)
-          );
-        })
+  } = useQuery(
+    ["pokemon", searchTerm, page],
+    () =>
+      searchTerm
+        ? Axios.get(
+            `https://pokeapi.co/api/v2/pokemon/${searchTerm.toLowerCase()}`
+          ).then((res) => res.data)
+        : Axios.get(
+            `https://pokeapi.co/api/v2/pokemon?offset=${
+              (page - 1) * limit
+            }&limit=${limit}`
+          ).then((res) => {
+            const { results } = res.data;
+            const requests = results.map((result) => Axios.get(result.url));
+            return Promise.all(requests).then((pokemonResponses) =>
+              pokemonResponses.map((pokemonRes) => pokemonRes.data)
+            );
+          }),
+    {
+      keepPreviousData: false,
+    }
   );
 
   function hasHomeSprite(data) {
@@ -50,13 +57,15 @@ function Home({ searchTerm }) {
     }
   }
 
-  function homeSprite(data) {
-    return data.sprites.other.home.front_default;
-  }
+  const homeSprite = useMemo(
+    () => (data) => data.sprites.other.home.front_default,
+    []
+  );
 
-  function artworkSprite(data) {
-    return data.sprites.other["official-artwork"]["front_default"];
-  }
+  const artworkSprite = useMemo(
+    () => (data) => data.sprites.other["official-artwork"]["front_default"],
+    []
+  );
 
   function handlePrevClick() {
     setPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -105,65 +114,52 @@ function Home({ searchTerm }) {
             key={pokemonData.id}
             name={pokemonData.species.name}
             weight={pokemonData.weight}
+            openBigCard={openBigCard}
           />
         </CardsContainer>
       </BackgroundImage>
     );
   } else {
-    const startId = (page - 1) * limit + 1;
-
-    console.log(pokemonData.length);
-
     return (
       <BackgroundImage>
-        <div className="flex justify-center items-center mt-4">
-          <button
-            className={` bg-purpleTheme hover:bg-yellowTheme text-white font-bold py-2 px-4 rounded mr-2 ${
-              page === 1 ? "bg-gray-400 cursor-not-allowed" : ""
-            }`}
-            onClick={handlePrevClick}
-            disabled={page === 1}
-          >
-            Prev
-          </button>
-          <h1>{page}/11</h1>
-          <button
-            className={` bg-purpleTheme hover:bg-yellowTheme text-white font-bold py-2 px-4 ml-2 rounded ${
-              page === 11 ? "bg-gray-400 cursor-not-allowed" : ""
-            }`}
-            onClick={handleNextClick}
-            disabled={page === 11}
-          >
-            Next
-          </button>
-        </div>
+        <Pagination
+          page={page}
+          handlePrevClick={handlePrevClick}
+          handleNextClick={handleNextClick}
+        />
         <CardsContainer>
           {Array.isArray(pokemonData) &&
-            pokemonData.map((data) => {
+            pokemonData.map((pokemon) => {
               let imageValue;
 
-              if (!isPokemonAvailable(data)) {
+              if (!isPokemonAvailable(pokemon)) {
                 return null;
               }
 
-              if (hasHomeSprite(data)) {
-                imageValue = homeSprite(data);
+              if (hasHomeSprite(pokemon)) {
+                imageValue = homeSprite(pokemon);
               } else {
-                imageValue = artworkSprite(data);
+                imageValue = artworkSprite(pokemon);
               }
 
               return (
                 <SmallCard
-                  height={data.height}
-                  id={data.id}
+                  height={pokemon.height}
+                  id={pokemon.id}
                   image={imageValue}
-                  key={data.id}
-                  name={data.species.name}
-                  weight={data.weight}
+                  key={pokemon.id}
+                  name={pokemon.species.name}
+                  weight={pokemon.weight}
+                  openBigCard={openBigCard}
                 />
               );
             })}
         </CardsContainer>
+        <Pagination
+          page={page}
+          handlePrevClick={handlePrevClick}
+          handleNextClick={handleNextClick}
+        />
       </BackgroundImage>
     );
   }
@@ -171,6 +167,7 @@ function Home({ searchTerm }) {
 
 Home.propTypes = {
   searchTerm: PropTypes.string,
+  openBigCard: PropTypes.func,
 };
 
 export default Home;

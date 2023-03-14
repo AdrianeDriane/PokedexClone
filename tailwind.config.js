@@ -7,7 +7,7 @@ module.exports = {
         purpleTheme: "hsl(259.63, 39%, 41%)",
         yellowTheme: "hsl(40, 88%, 55%)",
         darkYellowFontColor: "#AA8357",
-        grayTheme: "#E1E1E1",
+        grayTheme: "#EFEFED",
       },
     },
   },

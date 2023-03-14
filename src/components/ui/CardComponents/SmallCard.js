@@ -1,14 +1,21 @@
 import PropTypes from "prop-types";
 import styles from "./SmallCard.module.css";
+import React from "react";
 
-function SmallCard({ height, id, image, name, weight }) {
+function SmallCard({ height, id, image, name, weight, openBigCard }) {
   return (
     <div
       className={`${styles["float-shadow"]} h-64 w-52 rounded-3xl p-2 bg-grayTheme shadow-2xl cursor-pointer`}
+      onClick={() => openBigCard(id, image)}
     >
       <div className="h-full w-full ">
         <div className="w-full h-3/5 flex items-center justify-center">
-          <img className=" h-full" src={image} alt={name}></img>
+          <img
+            className=" h-full"
+            src={image}
+            alt={name}
+            draggable="false"
+          ></img>
         </div>
 
         <div className="h-2/5 px-3 text-sm">
@@ -36,6 +43,7 @@ SmallCard.propTypes = {
   image: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   weight: PropTypes.number.isRequired,
+  openBigCard: PropTypes.func,
 };
 
-export default SmallCard;
+export default React.memo(SmallCard);
