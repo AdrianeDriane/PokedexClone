@@ -4,7 +4,7 @@ function BigCardContainer({ children, closeBigCard }) {
   return (
     <div
       onClick={closeBigCard}
-      className="shadow-md rounded-3xl bg-grayTheme p-8 text-center z-10 fixed top-20 left-1/2 transform -translate-x-1/2"
+      className="shadow-md rounded-3xl bg-grayTheme p-2 xl:p-8 text-center z-10 fixed top-20 left-1/2 transform -translate-x-1/2 overflow-auto"
     >
       {children}
     </div>

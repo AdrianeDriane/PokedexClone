@@ -57,12 +57,12 @@ function Home({ searchTerm, openBigCard }) {
     }
   }
 
-  const homeSprite = useMemo(
+  const getHomeSprite = useMemo(
     () => (data) => data.sprites.other.home.front_default,
     []
   );
 
-  const artworkSprite = useMemo(
+  const getArtworkSprite = useMemo(
     () => (data) => data.sprites.other["official-artwork"]["front_default"],
     []
   );
@@ -99,9 +99,9 @@ function Home({ searchTerm, openBigCard }) {
     }
 
     if (hasHomeSprite(pokemonData)) {
-      imageValue = homeSprite(pokemonData);
+      imageValue = getHomeSprite(pokemonData);
     } else {
-      imageValue = artworkSprite(pokemonData);
+      imageValue = getArtworkSprite(pokemonData);
     }
 
     return (
@@ -137,9 +137,9 @@ function Home({ searchTerm, openBigCard }) {
               }
 
               if (hasHomeSprite(pokemon)) {
-                imageValue = homeSprite(pokemon);
+                imageValue = getHomeSprite(pokemon);
               } else {
-                imageValue = artworkSprite(pokemon);
+                imageValue = getArtworkSprite(pokemon);
               }
 
               return (
